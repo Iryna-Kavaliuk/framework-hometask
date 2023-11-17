@@ -5,6 +5,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import waits.Waiter;
+
 import java.util.List;
 
 public class GoogleCloudPricingCalculatorPage {
@@ -16,7 +17,7 @@ public class GoogleCloudPricingCalculatorPage {
 
     By cookiesAlert = By.className("devsite-snackbar-action");
     By productTypeTabs = By.xpath("//md-tab-item[@role='tab']/div/div/div[@class='name']/span");
-    By cloudSiteFrame= By.xpath("//article[@id='cloud-site']/devsite-iframe/iframe");
+    By cloudSiteFrame = By.xpath("//article[@id='cloud-site']/devsite-iframe/iframe");
     By myResourcesFrame = By.id("myFrame");
     By numberOfInstancesInput = By.xpath("//input[@type='number']");
     By operatingSystemsInput = By.xpath("//label[text() = 'Operating System / Software']/../descendant::span/div[@class='md-text']");
@@ -50,9 +51,9 @@ public class GoogleCloudPricingCalculatorPage {
 
     public void activateProductType(String productType) {
         List<WebElement> productTypeList = driver.findElements(productTypeTabs);
-        for(WebElement pt: productTypeList) {
+        for (WebElement pt : productTypeList) {
             String text = pt.getText();
-            if(text.contains(productType)) {
+            if (text.contains(productType)) {
                 pt.click();
                 break;
             }
@@ -161,34 +162,9 @@ public class GoogleCloudPricingCalculatorPage {
         return driver.findElement(estimationResultContent).getText();
     }
 
-//    public void setOperatingSystems(String operatingSystem) {
-//        Waiter.waitForElementLocatedBy(driver, operatingSystemsInput);
-//        driver.findElement(operatingSystemsInput).click();
-//        List<WebElement> operatingSystemList = driver.findElements(operatingSystemsItem);
-//        for(WebElement os: operatingSystemList) {
-//            String text = os.getText();
-//            if(text.contains(operatingSystem)) {
-//                os.click;
-//                break;
-//            }
-//        }
-//    }
-
-//    public void setProvisioningModel(String provisioningModel) {
-//        Waiter.waitForElementLocatedBy(driver, provisioningModelInput);
-//        driver.findElement(provisioningModelInput).click();
-//        List<WebElement> provisioningModelList = driver.findElements(provisioningModelItem);
-//        for(WebElement pm: provisioningModelList) {
-//            if(pm.getText().contains(provisioningModel)) {
-//                pm.click();
-//                break;
-//            }
-//        }
-//    }
-
     private void scrollToElement(By by) {
         WebElement element = driver.findElement(by);
-        ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", element);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", element);
     }
 
     private String buildLocatorByText(String defaultPart, String valuePart) {
