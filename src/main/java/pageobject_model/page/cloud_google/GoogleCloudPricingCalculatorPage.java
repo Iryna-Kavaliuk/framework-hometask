@@ -168,7 +168,7 @@ public class GoogleCloudPricingCalculatorPage {
     }
 
     private String buildLocatorByText(String defaultPart, String valuePart) {
-        return (defaultPart + "//div[text()[contains(.,'" + valuePart + "')]]");
+        return String.format("%s//div[text()[contains(.,'%s')]]", defaultPart, valuePart);
     }
 
 }
