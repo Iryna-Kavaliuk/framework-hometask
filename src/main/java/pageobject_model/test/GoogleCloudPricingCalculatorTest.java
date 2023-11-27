@@ -55,6 +55,7 @@ public class GoogleCloudPricingCalculatorTest {
         calculatorPage.setDataCenterLocation(DATACENTER_LOCATION);
         calculatorPage.setCommittedUsage(COMMITTED_USAGE);
         calculatorPage.clickAddToEstimateButton();
+        calculatorPage.highlightResultingContent();
 
         Assert.assertEquals(MANUALLY_GOT_ESTIMATION, calculatorPage.getEstimationResult(),
                 "Estimations got manually and automatically are different!");

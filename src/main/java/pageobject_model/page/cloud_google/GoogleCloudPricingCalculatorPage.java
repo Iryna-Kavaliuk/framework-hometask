@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import waits.Waiter;
 
 import java.util.List;
@@ -32,18 +33,10 @@ public class GoogleCloudPricingCalculatorPage {
     By committedUsageInput = By.xpath("//label[text() = 'Committed usage']/../descendant::span/div[@class='md-text']");
     By hoursInput = By.xpath("//input[@name='hours']");
     By addToEstimateButton = By.xpath("//button[text()[contains(., 'Add to Estimate')]]");
+    String gpuNumberSelectContainer = "//div[contains(@id, 'select_container')]//md-option[contains(@ng-repeat, 'gpuType') and @value='%s']/div[1]";
 
     By estimationResultContent = By.xpath("//md-card-content[@id='resultBlock']//h2[@class='md-flex ng-binding ng-scope']");
-
-    String operatingSystemsSelectContainer = "//div[@id='select_container_115']";
-    String provisioningModelSelectContainer = "//div[@id='select_container_119']";
-    String seriesSelectContainer = "//div[@id='select_container_127']";
-    String machineTypeSelectContainer = "//div[@id='select_container_129']";
-    String gpuTypeSelectContainer = "//div[@id='select_container_510']";
-    String gpuNumberSelectContainer = "//div[@id='select_container_512']";
-    String localSSDSelectContainer = "//div[@id='select_container_469']";
-    String dataCenterLocationSelectContainer = "//div[@id='select_container_135']";
-    String committedUsageSelectContainer = "//div[@id='select_container_142']";
+    By estimationResultFullContent = By.xpath("//*[@id=\"resultBlock\"]/md-card//b[@class='ng-binding']");
 
     public void closeCookiesAlert() {
         driver.findElement(cookiesAlert).click();
@@ -69,7 +62,7 @@ public class GoogleCloudPricingCalculatorPage {
     public void setOperatingSystems(String operatingSystem) {
         Waiter.waitForElementLocatedBy(driver, operatingSystemsInput);
         driver.findElement(operatingSystemsInput).click();
-        String locator = buildLocatorByText(operatingSystemsSelectContainer, operatingSystem);
+        String locator = buildLocatorByText(operatingSystem);
         WebElement osChoice = driver.findElement(By.xpath(locator));
         Waiter.waitForElementLocated(driver, osChoice);
         driver.switchTo().activeElement();
@@ -79,7 +72,7 @@ public class GoogleCloudPricingCalculatorPage {
     public void setProvisioningModel(String provisioningModel) {
         Waiter.waitForElementLocatedBy(driver, provisioningModelInput);
         driver.findElement(provisioningModelInput).click();
-        String locator = buildLocatorByText(provisioningModelSelectContainer, provisioningModel);
+        String locator = buildLocatorByText(provisioningModel);
         WebElement provisioningModelChoice = driver.findElement(By.xpath(locator));
         Waiter.waitForElementLocated(driver, provisioningModelChoice);
         provisioningModelChoice.click();
@@ -88,7 +81,7 @@ public class GoogleCloudPricingCalculatorPage {
     public void setSeries(String series) {
         scrollToElement(operatingSystemsInput);
         driver.findElement(seriesInput).click();
-        String locator = buildLocatorByText(seriesSelectContainer, series);
+        String locator = buildLocatorByText(series);
         WebElement seriesChoice = driver.findElement(By.xpath(locator));
         Waiter.waitForElementLocated(driver, seriesChoice);
         driver.switchTo().activeElement();
@@ -97,10 +90,10 @@ public class GoogleCloudPricingCalculatorPage {
 
     public void setMachineType(String machineType) {
         driver.findElement(machineTypeInput).click();
-        String locator = buildLocatorByText(machineTypeSelectContainer, machineType);
+        String locator = buildLocatorByText(machineType);
         WebElement machineTypeChoice = driver.findElement(By.xpath(locator));
         Waiter.waitForElementLocated(driver, machineTypeChoice);
-        machineTypeChoice.click();
+        clickToElement(By.xpath(locator));
     }
 
     public void checkAddGPUsCheckbox() {
@@ -110,7 +103,7 @@ public class GoogleCloudPricingCalculatorPage {
     public void setGpuType(String gpuType) {
         driver.switchTo().activeElement();
         driver.findElement(gpuTypeInput).click();
-        String locator = buildLocatorByText(gpuTypeSelectContainer, gpuType);
+        String locator = buildLocatorByText(gpuType);
         WebElement gpuTypeChoice = driver.findElement(By.xpath(locator));
         Waiter.waitForElementLocated(driver, gpuTypeChoice);
         gpuTypeChoice.click();
@@ -119,7 +112,7 @@ public class GoogleCloudPricingCalculatorPage {
     public void setGpuNumber(String gpuNumber) {
         Waiter.waitForElementLocatedBy(driver, gpuNumberInput);
         driver.findElement(gpuNumberInput).click();
-        String locator = buildLocatorByText(gpuNumberSelectContainer, gpuNumber);
+        String locator = String.format(gpuNumberSelectContainer, gpuNumber);
         WebElement gpuNumberChoice = driver.findElement(By.xpath(locator));
         Waiter.waitForElementLocated(driver, gpuNumberChoice);
         gpuNumberChoice.click();
@@ -129,7 +122,7 @@ public class GoogleCloudPricingCalculatorPage {
         Waiter.waitForElementLocatedBy(driver, hoursInput);
         driver.switchTo().activeElement();
         driver.findElement(localSSDInput).click();
-        String locator = buildLocatorByText(localSSDSelectContainer, LocalSSD);
+        String locator = buildLocatorByText(LocalSSD);
         WebElement localSSDChoice = driver.findElement(By.xpath(locator));
         Waiter.waitForElementLocated(driver, localSSDChoice);
         driver.switchTo().activeElement();
@@ -139,7 +132,7 @@ public class GoogleCloudPricingCalculatorPage {
     public void setDataCenterLocation(String dcLocation) {
         Waiter.waitForElementLocatedBy(driver, dataCenterLocationInput);
         driver.findElement(dataCenterLocationInput).click();
-        String locator = buildLocatorByText(dataCenterLocationSelectContainer, dcLocation);
+        String locator = buildLocatorByText(dcLocation);
         WebElement dcLocationChoice = driver.findElement(By.xpath(locator));
         Waiter.waitForElementLocated(driver, dcLocationChoice);
         dcLocationChoice.click();
@@ -148,18 +141,28 @@ public class GoogleCloudPricingCalculatorPage {
     public void setCommittedUsage(String committedUsage) {
         Waiter.waitForElementLocatedBy(driver, committedUsageInput);
         driver.findElement(committedUsageInput).click();
-        String locator = buildLocatorByText(committedUsageSelectContainer, committedUsage);
+        String locator = buildLocatorByText(committedUsage);
         WebElement usageChoice = driver.findElement(By.xpath(locator));
         Waiter.waitForElementLocated(driver, usageChoice);
         usageChoice.click();
     }
 
-    public void clickAddToEstimateButton() {
-        driver.findElement(addToEstimateButton).click();
+    public void clickAddToEstimateButton() throws InterruptedException {
+        scrollToElement(dataCenterLocationInput);
+        clickToElement(addToEstimateButton);
     }
 
     public String getEstimationResult() {
         return driver.findElement(estimationResultContent).getText();
+    }
+
+    public void  highlightResultingContent() {
+        scrollToElement(estimationResultFullContent);
+        Actions builder = new Actions(driver);
+        WebElement content = driver.findElement(estimationResultContent);
+
+        builder.moveToElement(content, 0, 0).build().perform();
+        builder.clickAndHold().moveToElement(content, content.getSize().getWidth()/ 2, content.getSize().getHeight() / 2).release().build().perform();
     }
 
     private void scrollToElement(By by) {
@@ -167,8 +170,13 @@ public class GoogleCloudPricingCalculatorPage {
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", element);
     }
 
-    private String buildLocatorByText(String defaultPart, String valuePart) {
-        return String.format("%s//div[text()[contains(.,'%s')]]", defaultPart, valuePart);
+    private void clickToElement(By by) {
+        WebElement element = driver.findElement(by);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+    }
+
+    private String buildLocatorByText(String valuePart) {
+        return String.format("//div[contains(@id, 'select_container')]//div[text()[contains(.,'%s')]]", valuePart);
     }
 
 }
