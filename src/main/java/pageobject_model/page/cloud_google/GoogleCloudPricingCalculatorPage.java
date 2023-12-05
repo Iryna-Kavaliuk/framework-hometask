@@ -10,6 +10,7 @@ import waits.Waiter;
 import java.util.List;
 
 public class GoogleCloudPricingCalculatorPage {
+
     private WebDriver driver;
 
     public GoogleCloudPricingCalculatorPage(WebDriver driver) {
@@ -34,6 +35,8 @@ public class GoogleCloudPricingCalculatorPage {
     By hoursInput = By.xpath("//input[@name='hours']");
     By addToEstimateButton = By.xpath("//button[text()[contains(., 'Add to Estimate')]]");
     String gpuNumberSelectContainer = "//div[contains(@id, 'select_container')]//md-option[contains(@ng-repeat, 'gpuType') and @value='%s']/div[1]";
+    String dataCenterLocationContainer = "//md-option[contains(@ng-repeat, 'computeServer')]/div[text()[contains(.,'%s')]]";
+    String committedUsageContainer = "//div[contains(@id, 'select_container')]//div[@class='md-ripple-container']/preceding-sibling::div[contains(.,'%s')]";
 
     By estimationResultContent = By.xpath("//md-card-content[@id='resultBlock']//h2[@class='md-flex ng-binding ng-scope']");
     By estimationResultFullContent = By.xpath("//*[@id=\"resultBlock\"]/md-card//b[@class='ng-binding']");
@@ -130,9 +133,13 @@ public class GoogleCloudPricingCalculatorPage {
     }
 
     public void setDataCenterLocation(String dcLocation) {
+        scrollToElement(committedUsageInput);
+//        driver.switchTo().frame(driver.findElement(By.id("myFrame")));
         Waiter.waitForElementLocatedBy(driver, dataCenterLocationInput);
-        driver.findElement(dataCenterLocationInput).click();
-        String locator = buildLocatorByText(dcLocation);
+        clickToElement(dataCenterLocationInput);
+//        driver.findElement(dataCenterLocationInput).click();
+//        String locator = buildLocatorByText(dcLocation);
+        String locator = String.format(dataCenterLocationContainer, dcLocation);
         WebElement dcLocationChoice = driver.findElement(By.xpath(locator));
         Waiter.waitForElementLocated(driver, dcLocationChoice);
         dcLocationChoice.click();
@@ -141,7 +148,8 @@ public class GoogleCloudPricingCalculatorPage {
     public void setCommittedUsage(String committedUsage) {
         Waiter.waitForElementLocatedBy(driver, committedUsageInput);
         driver.findElement(committedUsageInput).click();
-        String locator = buildLocatorByText(committedUsage);
+//        String locator = buildLocatorByText(committedUsage);
+        String locator = String.format(committedUsageContainer, committedUsage);
         WebElement usageChoice = driver.findElement(By.xpath(locator));
         Waiter.waitForElementLocated(driver, usageChoice);
         usageChoice.click();

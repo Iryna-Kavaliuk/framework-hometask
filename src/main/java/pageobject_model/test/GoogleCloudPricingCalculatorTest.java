@@ -25,7 +25,8 @@ public class GoogleCloudPricingCalculatorTest {
     private static final String GPU_TYPE = "NVIDIA Tesla T4";
     private static final String NUMBER_OF_GPUS = "1";
     private static final String LOCAL_SSD = "2x375 GB";
-    private static final String DATACENTER_LOCATION = "Frankfurt (europe-west3)";
+//    private static final String DATACENTER_LOCATION = "Frankfurt (europe-west3)";
+    private static final String DATACENTER_LOCATION = "Northern Virginia";
     private static final String COMMITTED_USAGE = "1 Year";
     private static final String MANUALLY_GOT_ESTIMATION = "1,840.40 / mo";
 
