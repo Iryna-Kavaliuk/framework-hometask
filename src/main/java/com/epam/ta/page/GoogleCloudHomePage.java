@@ -1,48 +1,60 @@
-package pageobject_model.page.cloud_google;
+package com.epam.ta.page;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import com.epam.ta.utils.Waiter;
+
 import java.util.List;
 
-import static waits.Waiter.waitForElementLocatedBy;
+import static com.epam.ta.utils.Waiter.waitForElementLocatedBy;
 
-public class GoogleCloudHomePage {
+public class GoogleCloudHomePage extends AbstractPage {
     private static final String HOMEPAGE_URL = "https://cloud.google.com/ ";
-    private WebDriver driver;
+    private final Logger logger = LogManager.getRootLogger();
 
     public GoogleCloudHomePage(WebDriver driver) {
-        this.driver = driver;
+        super(driver);
     }
 
     By searchButton = By.xpath("//form[@action = \"https://cloud.google.com/s/results\"]");
     By searchInput = By.name("q");
     By searchResultLink = By.xpath("//div[@class='gs-title']/a");
 
+    @Override
     public GoogleCloudHomePage openPage() {
         driver.get(HOMEPAGE_URL);
         waitForElementLocatedBy(driver, searchInput);
+        logger.info("GC home page opened");
         return this;
     }
 
-    public void enterSearchTerm(String term) throws InterruptedException {
+    public void enterSearchTerm(String term) {
         driver.findElement(searchButton).click();
-        Thread.sleep(3000);
+        Waiter.waitForElementLocatedBy(driver, searchInput);
         driver.findElement(searchInput).sendKeys(term);
         driver.findElement(searchInput).submit();
-        Thread.sleep(3000);
     }
 
-    public GoogleCloudPricingCalculatorPage selectTargetingLinkFromSearchResults(String term) {
+    public String findTargetingLinkInSearchResults(String term) {
+        Waiter.waitForElementLocatedBy(driver, searchResultLink);
         List<WebElement> searchResultList = driver.findElements(searchResultLink);
         for(WebElement result: searchResultList) {
             String text = result.getText();
             if(text.contains(term)) {
-                result.click();
-                break;
+                logger.info("Targeting link is found");
+                return result.getAttribute("href");
             }
         }
+        return null;
+    }
+
+    public GoogleCloudPricingCalculatorPage navigateWithTargetingLinkFromSearchResults(String targetURL) {
+        driver.navigate().to(targetURL);
         return new GoogleCloudPricingCalculatorPage(driver);
     }
+
 
 }

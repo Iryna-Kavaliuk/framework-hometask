@@ -1,22 +1,24 @@
-package pageobject_model.page.cloud_google;
+package com.epam.ta.page;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import waits.Waiter;
+import com.epam.ta.utils.Waiter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class GoogleCloudPricingCalculatorPage {
+public class GoogleCloudPricingCalculatorPage extends AbstractPage {
 
-    private WebDriver driver;
-
+    private final Logger logger = LogManager.getRootLogger();
     public GoogleCloudPricingCalculatorPage(WebDriver driver) {
-        this.driver = driver;
+        super(driver);
     }
 
+    By freeTrialButton = By.xpath("//a[@track-type = 'freeTrial']");
     By cookiesAlert = By.className("devsite-snackbar-action");
     By productTypeTabs = By.xpath("//md-tab-item[@role='tab']/div/div/div[@class='name']/span");
     By cloudSiteFrame = By.xpath("//article[@id='cloud-site']/devsite-iframe/iframe");
@@ -36,13 +38,23 @@ public class GoogleCloudPricingCalculatorPage {
     By addToEstimateButton = By.xpath("//button[text()[contains(., 'Add to Estimate')]]");
     String gpuNumberSelectContainer = "//div[contains(@id, 'select_container')]//md-option[contains(@ng-repeat, 'gpuType') and @value='%s']/div[1]";
     String dataCenterLocationContainer = "//md-option[contains(@ng-repeat, 'computeServer')]/div[text()[contains(.,'%s')]]";
-    String committedUsageContainer = "//div[contains(@id, 'select_container')]//div[@class='md-ripple-container']/preceding-sibling::div[contains(.,'%s')]";
+    String committedUsageContainer = "//div[@class='md-ripple-container']/preceding-sibling::div[contains(.,'%s')]/parent::md-option";
 
     By estimationResultContent = By.xpath("//md-card-content[@id='resultBlock']//h2[@class='md-flex ng-binding ng-scope']");
     By estimationResultFullContent = By.xpath("//*[@id=\"resultBlock\"]/md-card//b[@class='ng-binding']");
 
     public void closeCookiesAlert() {
         driver.findElement(cookiesAlert).click();
+    }
+
+    @Override
+    public GoogleCloudPricingCalculatorPage openPage() {
+        logger.info("Pricing calculator page opened");
+        return this;
+    }
+
+    public boolean isPageOpened() {
+        return Waiter.waitForElementLocatedBy(driver, freeTrialButton) != null;
     }
 
     public void activateProductType(String productType) {
@@ -57,12 +69,12 @@ public class GoogleCloudPricingCalculatorPage {
         driver.switchTo().frame(driver.findElement(cloudSiteFrame)).switchTo().frame(driver.findElement(myResourcesFrame));
     }
 
-    public void setNumberOfInstances(String number) {
+    public void enterNumberOfInstances(int number) {
         Waiter.waitForElementLocatedBy(driver, numberOfInstancesInput);
-        driver.findElement(numberOfInstancesInput).sendKeys(number);
+        driver.findElement(numberOfInstancesInput).sendKeys(String.valueOf(number));
     }
 
-    public void setOperatingSystems(String operatingSystem) {
+    public void enterOperatingSystems(String operatingSystem) {
         Waiter.waitForElementLocatedBy(driver, operatingSystemsInput);
         driver.findElement(operatingSystemsInput).click();
         String locator = buildLocatorByText(operatingSystem);
@@ -72,7 +84,7 @@ public class GoogleCloudPricingCalculatorPage {
         osChoice.click();
     }
 
-    public void setProvisioningModel(String provisioningModel) {
+    public void enterProvisioningModel(String provisioningModel) {
         Waiter.waitForElementLocatedBy(driver, provisioningModelInput);
         driver.findElement(provisioningModelInput).click();
         String locator = buildLocatorByText(provisioningModel);
@@ -81,7 +93,7 @@ public class GoogleCloudPricingCalculatorPage {
         provisioningModelChoice.click();
     }
 
-    public void setSeries(String series) {
+    public void enterSeries(String series) {
         scrollToElement(operatingSystemsInput);
         driver.findElement(seriesInput).click();
         String locator = buildLocatorByText(series);
@@ -91,7 +103,7 @@ public class GoogleCloudPricingCalculatorPage {
         seriesChoice.click();
     }
 
-    public void setMachineType(String machineType) {
+    public void enterMachineType(String machineType) {
         driver.findElement(machineTypeInput).click();
         String locator = buildLocatorByText(machineType);
         WebElement machineTypeChoice = driver.findElement(By.xpath(locator));
@@ -103,7 +115,7 @@ public class GoogleCloudPricingCalculatorPage {
         driver.findElement(addGPUsCheckbox).click();
     }
 
-    public void setGpuType(String gpuType) {
+    public void enterGpuType(String gpuType) {
         driver.switchTo().activeElement();
         driver.findElement(gpuTypeInput).click();
         String locator = buildLocatorByText(gpuType);
@@ -112,7 +124,7 @@ public class GoogleCloudPricingCalculatorPage {
         gpuTypeChoice.click();
     }
 
-    public void setGpuNumber(String gpuNumber) {
+    public void enterGpuNumber(int gpuNumber) {
         Waiter.waitForElementLocatedBy(driver, gpuNumberInput);
         driver.findElement(gpuNumberInput).click();
         String locator = String.format(gpuNumberSelectContainer, gpuNumber);
@@ -121,7 +133,7 @@ public class GoogleCloudPricingCalculatorPage {
         gpuNumberChoice.click();
     }
 
-    public void setLocalSSD(String LocalSSD) {
+    public void enterLocalSSD(String LocalSSD) {
         Waiter.waitForElementLocatedBy(driver, hoursInput);
         driver.switchTo().activeElement();
         driver.findElement(localSSDInput).click();
@@ -132,25 +144,22 @@ public class GoogleCloudPricingCalculatorPage {
         localSSDChoice.click();
     }
 
-    public void setDataCenterLocation(String dcLocation) {
+    public void enterDataCenterLocation(String dcLocation) {
         scrollToElement(committedUsageInput);
-//        driver.switchTo().frame(driver.findElement(By.id("myFrame")));
         Waiter.waitForElementLocatedBy(driver, dataCenterLocationInput);
         clickToElement(dataCenterLocationInput);
-//        driver.findElement(dataCenterLocationInput).click();
-//        String locator = buildLocatorByText(dcLocation);
         String locator = String.format(dataCenterLocationContainer, dcLocation);
         WebElement dcLocationChoice = driver.findElement(By.xpath(locator));
         Waiter.waitForElementLocated(driver, dcLocationChoice);
         dcLocationChoice.click();
     }
 
-    public void setCommittedUsage(String committedUsage) {
+    public void enterCommittedUsage(String committedUsage) {
+        scrollToElement(addToEstimateButton);
         Waiter.waitForElementLocatedBy(driver, committedUsageInput);
-        driver.findElement(committedUsageInput).click();
-//        String locator = buildLocatorByText(committedUsage);
+        clickToElement(committedUsageInput);
         String locator = String.format(committedUsageContainer, committedUsage);
-        WebElement usageChoice = driver.findElement(By.xpath(locator));
+        WebElement usageChoice = driver.findElement(By.xpath("//md-option[@id='select_option_138']"));
         Waiter.waitForElementLocated(driver, usageChoice);
         usageChoice.click();
     }
@@ -161,7 +170,9 @@ public class GoogleCloudPricingCalculatorPage {
     }
 
     public String getEstimationResult() {
-        return driver.findElement(estimationResultContent).getText();
+        String estimation = driver.findElement(estimationResultContent).getText();
+        logger.info("Estimation is test product is calculated:" + estimation);
+        return estimation;
     }
 
     public void  highlightResultingContent() {
