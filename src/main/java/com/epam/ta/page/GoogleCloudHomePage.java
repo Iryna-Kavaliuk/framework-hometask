@@ -35,7 +35,9 @@ public class GoogleCloudHomePage extends AbstractPage {
         driver.findElement(searchButton).click();
         Waiter.waitForElementLocatedBy(driver, searchInput);
         driver.findElement(searchInput).sendKeys(term);
+        logger.debug("Search term is entered");
         driver.findElement(searchInput).submit();
+        logger.info("Search term is submitted");
     }
 
     public String findTargetingLinkInSearchResults(String term) {
@@ -48,11 +50,13 @@ public class GoogleCloudHomePage extends AbstractPage {
                 return result.getAttribute("href");
             }
         }
+        logger.error("Targeting search is NOT found");
         return null;
     }
 
     public GoogleCloudPricingCalculatorPage navigateWithTargetingLinkFromSearchResults(String targetURL) {
         driver.navigate().to(targetURL);
+        logger.debug("Redirect to CP calculator");
         return new GoogleCloudPricingCalculatorPage(driver);
     }
 
